@@ -4,7 +4,7 @@ conf = SparkConf().setAppName("DE-ETL-102").setMaster("local[*]") #setMaster() l
 
 sc = SparkContext(conf = conf)
 
-file_rdd = sc.textFile("/home/duckthihn/PycharmProjects/DE-ETL/RDD/Data/data.txt")
+file_rdd = sc.textFile("/home/duckthihn/PycharmProjects/DE-ETL/RDD/data/data.txt")
 
 words_rdd = file_rdd.flatMap(lambda word: word.split(" "))
 

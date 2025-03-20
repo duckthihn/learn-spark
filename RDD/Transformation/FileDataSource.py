@@ -4,7 +4,7 @@ conf = SparkConf().setAppName("DE-ETL-102").setMaster("local[*]").set() #setMast
 
 sc = SparkContext(conf = conf)
 
-rdd = sc.textFile("/home/duckthihn/PycharmProjects/DE-ETL/RDD/Data/data.txt")
+rdd = sc.textFile("/home/duckthihn/PycharmProjects/DE-ETL/RDD/data/data.txt")
 
 print(rdd.collect())
 print(rdd.getNumPartitions())
