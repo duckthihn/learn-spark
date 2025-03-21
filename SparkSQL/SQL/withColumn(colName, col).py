@@ -161,32 +161,53 @@ schemaType = StructType([
 
 jsonData = spark.read.schema(schemaType).json("/home/duckthihn/PycharmProjects/DE-ETL/data/2015-03-01-17.json")
 
-# jsonData.show(3)
-# jsonData.printSchema()
-# jsonData.select(
-#     "id",
-#     "type",
-#     "actor.id",
-#     "actor.login",
-#     "repo.id",
-#     "repo.name",
-#     "repo.url",
-#     "payload.forkee.id",
-#     "payload.forkee.name",
-# ).show()
+"""
+colName: ten cot
+column: gia tri cua cot
 
-# jsonData.select(col("id")).show(5)
+- them cot moi neu colName doesnt exist
+- overwrite (existing colName)
 
-# jsonData.select(col("type"),col("actor.id")).show(5)
+col(), lit(), when(), struct() : de xac dinh gia tri cua cot
 
-# jsonData.select(col("actor.id") > 1).show(5)
+"""
 
-# jsonData.select(col("actor.id") > 1).where(col("actor.id") > 1).show(5)
+from pyspark.sql.functions import lit, struct
 
-# jsonData.select(col("id").alias("user_id")).show(5)
+# jsonData.withColumn("id2", lit("datdepzai")).select(col("id"), col("id2")).show()
 
-# SELECT with expression
-jsonData.selectExpr(
-    "count(distinct(id)) as user_count",
-    "count(distinct(actor.id)) as actor_count"
-).show()
+# jsonData.withColumn("actor.id2", lit("datxauzai")).select(col("actor.id"), col("actor.id2")).show(5) no such struct field 'id2'
+
+# add column id2 insider actor StructType
+
+jsonDataStruct = jsonData.withColumn(
+    "actor",
+    struct(
+        col("actor.id").alias("id"),
+        col("actor.login").alias("login"),
+        col("actor.gravatar_id").alias("gravatar_id"),
+        col("actor.url").alias("url"),
+        col("actor.avatar_url").alias("avatar_url"),
+        lit("dat09").alias("id2")
+    )
+).select(col("actor.id"), col("actor.id2"))
+
+jsonDataStruct.show(3)
+
+
+# function UDF: user define
+from pyspark.sql.functions import udf
+
+
+def plus3(data):
+    return data + 3
+
+plus3UDF = udf(plus3)
+
+df = jsonData.withColumn("dat09", plus3UDF(col("actor.id")))
+df.select(col("actor.id").alias("old_col"), col("dat09").alias("new_col")).show(3)
+
+
+
+
+

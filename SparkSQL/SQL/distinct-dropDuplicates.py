@@ -159,34 +159,18 @@ schemaType = StructType([
     ]), True)
 ])
 
+
+from pyspark.sql.functions import col, length
 jsonData = spark.read.schema(schemaType).json("/home/duckthihn/PycharmProjects/DE-ETL/data/2015-03-01-17.json")
 
-# jsonData.show(3)
-# jsonData.printSchema()
-# jsonData.select(
-#     "id",
-#     "type",
-#     "actor.id",
-#     "actor.login",
-#     "repo.id",
-#     "repo.name",
-#     "repo.url",
-#     "payload.forkee.id",
-#     "payload.forkee.name",
-# ).show()
+# jsonData.select(col("actor.id")).distinct().selectExpr()
+jsonData.select(col("payload.forkee.public")).distinct().show()
+jsonData.select(col("payload.forkee.public")).distinct().selectExpr("count(public) as count").show()
+jsonData.select(col("payload.forkee.public")).distinct().selectExpr("count(*) as count").show()
 
-# jsonData.select(col("id")).show(5)
+jsonData.select(col("payload.forkee.public").alias("public")).dropDuplicates(["public"]).show()
 
-# jsonData.select(col("type"),col("actor.id")).show(5)
 
-# jsonData.select(col("actor.id") > 1).show(5)
 
-# jsonData.select(col("actor.id") > 1).where(col("actor.id") > 1).show(5)
 
-# jsonData.select(col("id").alias("user_id")).show(5)
 
-# SELECT with expression
-jsonData.selectExpr(
-    "count(distinct(id)) as user_count",
-    "count(distinct(actor.id)) as actor_count"
-).show()
